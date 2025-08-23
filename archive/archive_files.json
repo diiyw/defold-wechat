@@ -1,0 +1,55 @@
+{
+    "content": [
+        {
+            "name": "game.projectc",
+            "size": 4370,
+            "pieces": [
+                {
+                    "name": "game0.projectc.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "name": "game.arci",
+            "size": 1648,
+            "pieces": [
+                {
+                    "name": "game0.arci.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "name": "game.arcd",
+            "size": 319358,
+            "pieces": [
+                {
+                    "name": "game0.arcd.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "name": "game.dmanifest",
+            "size": 1170,
+            "pieces": [
+                {
+                    "name": "game0.dmanifest.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "name": "game.public.der",
+            "size": 162,
+            "pieces": [
+                {
+                    "name": "game0.public.der.bin",
+                    "offset": 0
+                }
+            ]
+        }
+    ],
+    "total_size": 326708
+}

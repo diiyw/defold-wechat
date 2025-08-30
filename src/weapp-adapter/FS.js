@@ -1,29 +1,59 @@
 class FS {
 
-    mkdir() {
+    wxFs;
 
+    constructor() {
+        this.wxFs = wx.getFileSystemManager();
+    }
+
+    mkdir(dir) {
+        console.log("mkdir", dir);
     }
 
     write() {
-
+        console.log("write");
     }
 
-    close() { }
+    close() {
+        this.wxFs.closeSync({
+            fd: fd
+        });
+    }
 
-    chdir() { }
+    chdir() {
+        console.log("chdir");
+    }
 
-    mount() { }
+    mount() {
+        console.log("mount");
+    }
 
-    syncfs() { }
+    syncfs() {
+        console.log("syncfs");
+    }
 
-    stat() { }
+    stat() {
+        console.log("stat");
+    }
 
-    open() { }
+    open(path, flags) {
+        const fd = this.wxFs.openSync({
+            filePath: `${wx.env.USER_DATA_PATH}/${path}`,
+            flag: flags
+        })
+        return fd
+    }
 
-    mmap() { }
+    mmap() {
+        console.log("mmap");
+    }
 
-    createPreloadedFile(parent, name, url, canRead, canWrite) {
+    createPreloadedFile(parent, path, data, canRead, canWrite) {
+        this.wxFs.writeFileSync(`${wx.env.USER_DATA_PATH}/${parent}/${path}`, data.buffer, "binary");
+    }
 
+    staticInit() {
+        console.log("mmap");
     }
 }
 

@@ -1,5 +1,5 @@
 function GetUserPersistentDataRoot() {
-    return ""
+    return wx.env.USER_DATA_PATH;
 }
 
 export {

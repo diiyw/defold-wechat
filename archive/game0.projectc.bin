@@ -201,7 +201,7 @@ subpixels = 1
 
 [profiler]
 track_cpu = 0
-enabled = true
+enabled = false
 sleep_between_server_updates = 0
 performance_timeline_enabled = 0
 

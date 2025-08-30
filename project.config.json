@@ -2,7 +2,7 @@
   "appid": "wx21b1c69c4d7f0cb8",
   "projectname": "flappybird",
   "compileType": "game",
-  "libVersion": "3.9.0",
+  "libVersion": "3.9.2",
   "packOptions": {
     "ignore": [],
     "include": []

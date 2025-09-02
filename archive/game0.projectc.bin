@@ -1,16 +1,16 @@
 [project]
-title = flappybird
+title = Colorslide
 version = 1.0
 write_log = 0
 minimum_log_level = 1
 compress_archive = 1
 publisher = unnamed
 developer = unnamed
-title_as_file_name = flappybird
+title_as_file_name = Colorslide
 
 [display]
-width = 750
-height = 1624
+width = 640
+height = 1136
 high_dpi = 1
 samples = 0
 fullscreen = 0
@@ -32,7 +32,7 @@ type = 2D
 max_collision_object_count = 128
 use_fixed_timestep = 0
 gravity_y = -10
-debug = 0
+debug = 1
 debug_alpha = 0.9
 world_count = 4
 gravity_x = 0
@@ -96,7 +96,7 @@ game_binding = /input/game.input_bindingc
 use_accelerometer = 1
 
 [sprite]
-max_count = 128
+max_count = 512
 subpixels = 1
 
 [model]
@@ -143,7 +143,7 @@ package = com.example.todo
 gcm_sender_id = 
 manifest = /builtins/manifests/android/AndroidManifest.xml
 iap_provider = GooglePlay
-input_method = HiddenInputField
+input_method = KeyEvent
 immersive_mode = 0
 display_cutout = 1
 debuggable = 0
@@ -172,8 +172,8 @@ archive_location_prefix = archive
 archive_location_suffix = 
 engine_arguments = --verify-graphics-calls=false
 wasm_streaming = 0
-show_fullscreen_button = 0
-show_made_with_defold = 0
+show_fullscreen_button = 1
+show_made_with_defold = 1
 show_console_banner = 1
 scale_mode = downscale_fit
 transparent_graphics_context = 0
@@ -201,7 +201,7 @@ subpixels = 1
 
 [profiler]
 track_cpu = 0
-enabled = false
+enabled = true
 sleep_between_server_updates = 0
 performance_timeline_enabled = 0
 

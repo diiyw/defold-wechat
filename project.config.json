@@ -1,6 +1,6 @@
 {
   "appid": "wx21b1c69c4d7f0cb8",
-  "projectname": "flappybird",
+  "projectname": "Colorslide",
   "compileType": "game",
   "libVersion": "3.9.2",
   "packOptions": {
@@ -10,7 +10,7 @@
   "condition": {},
   "setting": {
     "urlCheck": false,
-    "es6": false,
+    "es6": true,
     "postcss": true,
     "minified": true,
     "packNpmRelationList": [],
@@ -22,7 +22,7 @@
     "compileWorklet": false,
     "uglifyFileName": false,
     "uploadWithSourceMap": true,
-    "enhance": false,
+    "enhance": true,
     "packNpmManually": false,
     "minifyWXSS": true,
     "minifyWXML": true,
@@ -38,5 +38,8 @@
     "tabSize": 2
   },
   "simulatorPluginLibVersion": {},
-  "isGameTourist": false
+  "isGameTourist": false,
+  "staticServerOptions": {
+    "servePath": "archive"
+  }
 }

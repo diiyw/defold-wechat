@@ -806,6 +806,7 @@ var ProgressView = {
     bar_id: "defold-progress-bar",
 
     addProgress: function (canvas) {
+        return;
         /* Insert default progress bar below canvas */
         canvas.insertAdjacentHTML('afterend', '<div id="' + ProgressView.progress_id + '" class="canvas-app-progress"><div id="' + ProgressView.bar_id + '" class="canvas-app-progress-bar" style="transform: scaleX(0.0);"></div></div>');
         ProgressView.bar = document.getElementById(ProgressView.bar_id);
@@ -1271,9 +1272,9 @@ Module["locateFile"] = function (path, scriptDirectory) {
     // we need to replace it here with the correct project name.
     if (path == "dmengine.wasm" || path == "dmengine_release.wasm" || path == "dmengine_headless.wasm") {
         if (Module['isWASMPthreadSupported']) {
-            path = "flappybird_pthread.wasm";
+            path = "Colorslide_wasm_pthread.wasm";
         } else {
-            path = "flappybird.wasm";
+            path = "Colorslide_wasm.wasm";
         }
     }
     return scriptDirectory + path;

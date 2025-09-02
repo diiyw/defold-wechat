@@ -10,7 +10,7 @@
     "useApiHook": true,
     "useApiHostProcess": true,
     "showShadowRootInWxmlPanel": false,
-    "useStaticServer": false,
+    "useStaticServer": true,
     "useLanDebug": false,
     "showES6CompileOption": false,
     "compileHotReLoad": false,
@@ -19,6 +19,6 @@
     "bigPackageSizeSupport": false
   },
   "libVersion": "3.9.2",
-  "projectname": "flappybird",
+  "projectname": "Colorslide",
   "condition": {}
 }

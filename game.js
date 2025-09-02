@@ -1,6 +1,10 @@
 import "./src/weapp-adapter/index.js";
 import { EngineLoader } from './dmloader';
 
-EngineLoader.load("canvas", "flappybird", function () {
-    require("flappybird_wasm.js")
-});
+try {
+  EngineLoader.load("canvas", "Colorslide", function () {
+    require("Colorslide_wasm.js")
+  });
+} catch (error) {
+  console.log(error)
+}

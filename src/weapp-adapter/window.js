@@ -30,7 +30,6 @@ export * from './WindowProperties'
 export { default as WebAssembly } from './WebAssembly';
 export { default as Module } from './Module'
 export { default as WebGL2RenderingContext } from './WebGL2RenderingContext'
-export { IDBRequest, IDBTransaction, IDBIndex, null as IDBCursor, IDBDatabas, indexedDB } from './indexedDB'
 
 
 const { platform } = wx.getSystemInfoSync()

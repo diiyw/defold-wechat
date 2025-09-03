@@ -10,7 +10,7 @@
     "useApiHook": true,
     "useApiHostProcess": true,
     "showShadowRootInWxmlPanel": false,
-    "useStaticServer": true,
+    "useStaticServer": false,
     "useLanDebug": false,
     "showES6CompileOption": false,
     "compileHotReLoad": false,

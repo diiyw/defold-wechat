@@ -5,16 +5,16 @@ export function parentNode(obj, level) {
         let _parent;
 
         if (level === 0) {
-            _parent = function() {
+            _parent = function () {
                 // return document
                 return null
             }
         } else if (level === 1) {
-            _parent = function() {
+            _parent = function () {
                 return document.documentElement
             }
         } else {
-            _parent = function() {
+            _parent = function () {
                 return document.body
             }
         }
@@ -29,15 +29,15 @@ export function parentNode(obj, level) {
         let _parent;
 
         if (level === 0) {
-            _parent = function() {
+            _parent = function () {
                 return null
             }
         } else if (level === 1) {
-            _parent = function() {
+            _parent = function () {
                 return document.documentElement
             }
         } else {
-            _parent = function() {
+            _parent = function () {
                 return document.body
             }
         }
@@ -59,6 +59,7 @@ export function style(obj) {
         height: innerHeight + 'px',
         margin: '0px',
         padding: '0px',
+        removeProperty(property) { },
     })
 }
 
@@ -73,7 +74,7 @@ export function clientRegion(obj) {
     }
 
     if (!('getBoundingClientRect' in obj)) {
-        obj.getBoundingClientRect = function() {
+        obj.getBoundingClientRect = function () {
             const ret = {
                 x: 0,
                 y: 0,
@@ -113,7 +114,7 @@ export function scrollRegion(obj) {
 }
 
 export function classList(obj) {
-    const noop = function() {}
+    const noop = function () { }
     obj.classList = []
     obj.classList.add = noop
     obj.classList.remove = noop

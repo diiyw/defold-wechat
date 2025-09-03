@@ -1755,7 +1755,7 @@ var TTY = {
 var mmapAlloc = function mmapAlloc(size) {
     abort();
 };
-var MEMFS = {
+GameGlobal.MEMFS = {
     ops_table: null,
     mount(mount) {
         return MEMFS.createNode(null, "/", 16895, 0);
@@ -2592,7 +2592,7 @@ var IDBFS = {
             });
     },
 };
-var FS = {
+GameGlobal.FS = {
     root: null,
     mounts: [],
     devices: {},
@@ -6215,7 +6215,7 @@ function _dmScriptHttpRequestAsync(
         xhr.send();
     }
 }
-var DMSYS = {
+GameGlobal.DMSYS = {
     _folder: "/data",
     _cstr: null,
     GetUserPersistentDataRoot: function GetUserPersistentDataRoot() {

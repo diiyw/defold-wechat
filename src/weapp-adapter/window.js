@@ -28,10 +28,7 @@ export { btoa, atob } from './Base64.js'
 export { default as Symbol } from './Symbol'
 export * from './WindowProperties'
 export { default as WebAssembly } from './WebAssembly';
-export { default as FS } from './FS'
 export { default as Module } from './Module'
-import * as DMSYS from './DMSYS'
-export { DMSYS }
 export { default as WebGL2RenderingContext } from './WebGL2RenderingContext'
 export { IDBRequest, IDBTransaction, IDBIndex, null as IDBCursor, IDBDatabas, indexedDB } from './indexedDB'
 

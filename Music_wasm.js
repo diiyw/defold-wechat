@@ -1755,7 +1755,7 @@ var TTY = {
 var mmapAlloc = function mmapAlloc(size) {
     abort();
 };
-GameGlobal.MEMFS = {
+var MEMFS = {
     ops_table: null,
     mount(mount) {
         return MEMFS.createNode(null, "/", 16895, 0);
@@ -12401,7 +12401,7 @@ Module["setCanvasSize"] = Browser.setCanvasSize;
 Module["getUserMedia"] = Browser.getUserMedia;
 Module["createContext"] = Browser.createContext;
 var ASM_CONSTS = {
-    355328: function _() {
+    355928: function _() {
         if (navigator.userAgent.toLowerCase().indexOf("chrome") > -1) {
             console.log(
                 "%c    %c    Made with Defold    %c    %c    https://www.defold.com",
@@ -12414,7 +12414,7 @@ var ASM_CONSTS = {
             console.log("Made with Defold -=[ https://www.defold.com ]=-");
         }
     },
-    355756: function _($0) {
+    356356: function _($0) {
         var jsResult;
         var isSuccess = 1;
         try {
@@ -12428,7 +12428,7 @@ var ASM_CONSTS = {
         var stringOnWasmHeap = stringToNewUTF8(jsResult);
         return stringOnWasmHeap;
     },
-    356024: function _() {
+    356624: function _() {
         document.removeEventListener(
             "click",
             Module.__defold_interaction_listener
@@ -12443,7 +12443,7 @@ var ASM_CONSTS = {
         );
         Module.__defold_interaction_listener = undefined;
     },
-    356312: function _() {
+    356912: function _() {
         Module.__defold_interaction_listener = function () {
             _dmScript_RunInteractionCallback();
         };
@@ -12460,10 +12460,10 @@ var ASM_CONSTS = {
             Module.__defold_interaction_listener
         );
     },
-    356633: function _($0) {
+    357233: function _($0) {
         Module.printErr(UTF8ToString($0));
     },
-    356672: function _($0) {
+    357272: function _($0) {
         Module.print(UTF8ToString($0));
     },
 };
@@ -12797,7 +12797,7 @@ var wasmImports = {
     ic: _emscripten_webgl_get_current_context,
     Hh: _environ_get,
     Gh: _environ_sizes_get,
-    U: _exit,
+    K: _exit,
     A: _fd_close,
     xa: _fd_read,
     Fa: _fd_seek,
@@ -12805,10 +12805,10 @@ var wasmImports = {
     t: _getaddrinfo,
     n: _getnameinfo,
     ta: _glActiveTexture,
-    T: _glAttachShader,
+    U: _glAttachShader,
     e: _glBindBuffer,
     sa: _glBindBufferBase,
-    S: _glBindFramebuffer,
+    T: _glBindFramebuffer,
     s: _glBindRenderbuffer,
     m: _glBindTexture,
     hc: _glBindVertexArray,
@@ -12821,9 +12821,9 @@ var wasmImports = {
     dc: _glClearDepthf,
     cc: _glClearStencil,
     bc: _glColorMask,
-    R: _glCompileShader,
+    S: _glCompileShader,
     l: _glCompressedTexImage2D,
-    Q: _glCompressedTexImage3D,
+    R: _glCompressedTexImage3D,
     k: _glCompressedTexSubImage2D,
     qa: _glCompressedTexSubImage3D,
     pa: _glCreateProgram,
@@ -12831,9 +12831,9 @@ var wasmImports = {
     ac: _glCullFace,
     na: _glDeleteBuffers,
     $b: _glDeleteFramebuffers,
-    P: _glDeleteProgram,
+    Q: _glDeleteProgram,
     _b: _glDeleteRenderbuffers,
-    O: _glDeleteShader,
+    P: _glDeleteShader,
     ma: _glDeleteTextures,
     Zb: _glDepthFunc,
     Yb: _glDepthMask,
@@ -12850,7 +12850,7 @@ var wasmImports = {
     Nb: _glFramebufferRenderbuffer,
     Mb: _glFramebufferTexture2D,
     Lb: _glFrontFace,
-    N: _glGenBuffers,
+    O: _glGenBuffers,
     Kb: _glGenFramebuffers,
     y: _glGenRenderbuffers,
     la: _glGenTextures,
@@ -12874,9 +12874,9 @@ var wasmImports = {
     ha: _glPixelStorei,
     Cb: _glPolygonOffset,
     Bb: _glReadPixels,
-    M: _glRenderbufferStorage,
+    N: _glRenderbufferStorage,
     Ab: _glScissor,
-    L: _glShaderSource,
+    M: _glShaderSource,
     zb: _glStencilFunc,
     yb: _glStencilFuncSeparate,
     xb: _glStencilMask,
@@ -12941,7 +12941,7 @@ var wasmImports = {
     Ha: _glfwTerminate,
     v: invoke_ii,
     p: invoke_iii,
-    K: invoke_iiii,
+    L: invoke_iiii,
     Ba: invoke_ji,
     Aa: invoke_jii,
     B: invoke_vi,

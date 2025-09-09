@@ -30,7 +30,9 @@ export * from './WindowProperties'
 export { default as WebAssembly } from './WebAssembly';
 export { default as Module } from './Module'
 export { default as WebGL2RenderingContext } from './WebGL2RenderingContext'
-
+export { default as AudioContext } from './AudioContext'
+// 为了兼容性，也导出 webkitAudioContext
+export { default as webkitAudioContext } from './AudioContext'
 
 const { platform } = wx.getSystemInfoSync()
 

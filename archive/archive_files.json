@@ -2,7 +2,7 @@
     "content": [
         {
             "name": "game.projectc",
-            "size": 4362,
+            "size": 4641,
             "pieces": [
                 {
                     "name": "game0.projectc.bin",
@@ -12,7 +12,7 @@
         },
         {
             "name": "game.arci",
-            "size": 2848,
+            "size": 1728,
             "pieces": [
                 {
                     "name": "game0.arci.bin",
@@ -22,7 +22,7 @@
         },
         {
             "name": "game.arcd",
-            "size": 565677,
+            "size": 528686,
             "pieces": [
                 {
                     "name": "game0.arcd.bin",
@@ -32,7 +32,7 @@
         },
         {
             "name": "game.dmanifest",
-            "size": 1920,
+            "size": 1239,
             "pieces": [
                 {
                     "name": "game0.dmanifest.bin",
@@ -51,5 +51,5 @@
             ]
         }
     ],
-    "total_size": 574969
+    "total_size": 536456
 }

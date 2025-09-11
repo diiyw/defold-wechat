@@ -1,14 +1,14 @@
 []
 
 [project]
-title = Music
+title = Defold-examples
 version = 0.1
 publisher = 
 developer = 
 write_log = 0
 minimum_log_level = 1
 compress_archive = 1
-title_as_file_name = Music
+title_as_file_name = Defoldexamples
 
 [display]
 width = 720
@@ -58,7 +58,7 @@ position_iterations = 10
 sub_step_count = 4
 
 [bootstrap]
-main_collection = /example/music.collectionc
+main_collection = /example/sys_save_load.collectionc
 render = /builtins/render/default.renderc
 debug_init_script = 
 

@@ -1755,7 +1755,7 @@ var TTY = {
 var mmapAlloc = function mmapAlloc(size) {
     abort();
 };
-GameGlobal.MEMFS = {
+var MEMFS = {
     ops_table: null,
     mount(mount) {
         return MEMFS.createNode(null, "/", 16895, 0);
@@ -2213,7 +2213,6 @@ var IDBFS = {
         };
         return indexedDB;
     })(function () {
-        console.log(indexedDB);
         if (typeof indexedDB != "undefined") return indexedDB;
         var ret = null;
         if (

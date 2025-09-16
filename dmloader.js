@@ -1167,6 +1167,7 @@ Module = {
             };
         }
         catch (error) {
+            console.warn("Unable to mount persistent storage: ", error);
             Module.persistentStorage = false;
             Module._preloadAndCallMain();
             return;

@@ -1,229 +1,136 @@
-var fs = wx.getFileSystemManager()
 
-class NODEFS {
-    static flagsForNodeMap = {};
+const wxFs = wx.getFileSystemManager();
 
-    static staticInit() {
-        var flags = process.binding("constants")["fs"];
-        NODEFS.flagsForNodeMap = {
-            "1024": flags["O_APPEND"],
-            "64": flags["O_CREAT"],
-            "128": flags["O_EXCL"],
-            "256": flags["O_NOCTTY"],
-            "0": flags["O_RDONLY"],
-            "2": flags["O_RDWR"],
-            "4096": flags["O_SYNC"],
-            "512": flags["O_TRUNC"],
-            "1": flags["O_WRONLY"],
-            "131072": flags["O_NOFOLLOW"],
-        };
-        // The 0 define must match on both sides, as otherwise we would not
-        // know to add it.
-        assert(NODEFS.flagsForNodeMap["0"] === 0);
-    }
-    static convertNodeCode(e) {
-        var code = e.code;
-        assert(code in ERRNO_CODES, `unexpected wx error code: ${code} (${e})`);
-        return ERRNO_CODES[code];
-    }
-    static tryFSOperation(f) {
-        try {
-            return f();
-        } catch (e) {
-            if (!e.code) throw e;
-            // node under windows can return code 'UNKNOWN' here:
-            // https://github.com/emscripten-core/emscripten/issues/15468
-            if (e.code === 'UNKNOWN') throw new FS.ErrnoError(28);
-            throw new FS.ErrnoError(NODEFS.convertNodeCode(e));
-        }
-    }
-    static mount(mount) {
-        return NODEFS.createNode(null, '/', NODEFS.getMode(mount.opts.root), 0);
-    }
-    static createNode(parent, name, mode, dev) {
-        if (!FS.isDir(mode) && !FS.isFile(mode) && !FS.isLink(mode)) {
-            throw new FS.ErrnoError(28);
-        }
-        var node = FS.createNode(parent, name, mode);
+var NODEFS = {
+    mount(mount) {
+        return NODEFS.createNode(null, "/", 16895, 0);
+    },
+    createNode(parent, name, mode, dev) {
+        var node = FS.createNode(parent, name, mode, dev);
+        node.atime = node.mtime = node.ctime = Date.now();
         node.node_ops = NODEFS.node_ops;
         node.stream_ops = NODEFS.stream_ops;
         return node;
-    }
-    static getMode(path) {
-        return NODEFS.tryFSOperation(() => {
-            var mode = fs.statSync(path, false).mode;
-            return mode;
-        });
-    }
-    static realPath(node) {
-        var parts = [];
+    },
+    getMode(parent, name) {
+        const stats = wxFs.statSync(NODEFS.realPath(parent, name));
+        var mode = stats.isDirectory() ? 16877 : 33188; // 目录或文件的默认权限
+        return mode ?? -1;
+    },
+    realPath(node, name) {
+        var parts = [name];
         while (node.parent !== node) {
             parts.push(node.name);
             node = node.parent;
         }
         parts.push(node.mount.opts.root);
+        parts.push(wx.env.USER_DATA_PATH);
         parts.reverse();
-        return PATH.join(...parts);
-    }
-    static flagsForNode(flags) {
-        flags &= ~2097152; // Ignore this flag from musl, otherwise node.js fails to open the file.
-        flags &= ~2048; // Ignore this flag from musl, otherwise node.js fails to open the file.
-        flags &= ~32768; // Ignore this flag from musl, otherwise node.js fails to open the file.
-        flags &= ~524288; // Some applications may pass it; it makes no sense for a single process.
-        flags &= ~65536; // Node.js doesn't need this passed in, it errors.
-        var newFlags = 0;
-        for (var k in NODEFS.flagsForNodeMap) {
-            if (flags & k) {
-                newFlags |= NODEFS.flagsForNodeMap[k];
-                flags ^= k;
-            }
-        }
-        if (flags) {
-            throw new FS.ErrnoError(28);
-        }
-        return newFlags;
-    }
-    static getattr(func, node) {
-        var stat = NODEFS.tryFSOperation(func);
-        return {
-            dev: stat.dev,
-            ino: node.id,
-            mode: stat.mode,
-            nlink: stat.nlink,
-            uid: stat.uid,
-            gid: stat.gid,
-            rdev: stat.rdev,
-            size: stat.size,
-            atime: stat.atime,
-            mtime: stat.mtime,
-            ctime: stat.ctime,
-            blksize: stat.blksize,
-            blocks: stat.blocks
-        };
-    }
-    static setattr(arg, node, attr, chmod, utimes, truncate, stat) {
-        NODEFS.tryFSOperation(() => {
-            if (attr.mode !== undefined) {
-                var mode = attr.mode;
-                chmod(arg, mode);
-                // update the common node structure mode as well
-                node.mode = attr.mode;
-            }
-            if (typeof (attr.atime ?? attr.mtime) === "number") {
-                // Unfortunately, we have to stat the current value if we don't want
-                // to change it. On top of that, since the times don't round trip
-                // this will only keep the value nearly unchanged not exactly
-                // unchanged. See:
-                // https://github.com/nodejs/node/issues/56492
-                var atime = new Date(attr.atime ?? stat(arg).atime);
-                var mtime = new Date(attr.mtime ?? stat(arg).mtime);
-                utimes(arg, atime, mtime);
-            }
-            if (attr.size !== undefined) {
-                truncate(arg, attr.size);
-            }
-        });
-    }
-    static node_ops = {
+        const path = parts.join('/');
+        console.log(path);
+        return path;
+    },
+    node_ops: {
         getattr(node) {
-            var path = NODEFS.realPath(node);
-            return NODEFS.getattr(() => fs.statSync(path,false), node);
+            var attr = {};
+            attr.dev = FS.isChrdev(node.mode) ? node.id : 1;
+            attr.ino = node.id;
+            attr.mode = node.mode;
+            attr.nlink = 1;
+            attr.uid = 0;
+            attr.gid = 0;
+            attr.rdev = node.rdev;
+            if (FS.isDir(node.mode)) {
+                attr.size = 4096;
+            } else if (FS.isFile(node.mode)) {
+                attr.size = node.usedBytes;
+            } else if (FS.isLink(node.mode)) {
+                attr.size = node.link.length;
+            } else {
+                attr.size = 0;
+            }
+            attr.atime = new Date(node.atime);
+            attr.mtime = new Date(node.mtime);
+            attr.ctime = new Date(node.ctime);
+            attr.blksize = 4096;
+            attr.blocks = Math.ceil(attr.size / attr.blksize);
+            return attr;
         },
         setattr(node, attr) {
-            var path = NODEFS.realPath(node);
-            if (attr.mode != null && attr.dontFollow) {
-                throw new FS.ErrnoError(52);
+            for (
+                var _i = 0, _arr = ["mode", "atime", "mtime", "ctime"];
+                _i < _arr.length;
+                _i++
+            ) {
+                var key = _arr[_i];
+                if (attr[key] != null) {
+                    node[key] = attr[key];
+                }
             }
-            NODEFS.setattr(path, node, attr, fs.chmodSync, fs.utimesSync, fs.truncateSync, fs.lstatSync);
         },
         lookup(parent, name) {
-            var path = PATH.join2(NODEFS.realPath(parent), name);
-            var mode = NODEFS.getMode(path);
+            const mode = NODEFS.getMode(parent, name);
             return NODEFS.createNode(parent, name, mode);
         },
         mknod(parent, name, mode, dev) {
-            var node = NODEFS.createNode(parent, name, mode, dev);
-            // create the backing node for this in the fs root as well
-            var path = NODEFS.realPath(node);
-            NODEFS.tryFSOperation(() => {
-                if (FS.isDir(node.mode)) {
-                    fs.mkdirSync(path, node.mode);
-                } else {
-                    fs.writeFileSync(path, '', { mode: node.mode });
-                }
-            });
-            return node;
+            return NODEFS.createNode(parent, name, mode, dev);
         },
-        rename(oldNode, newDir, newName) {
-            var oldPath = NODEFS.realPath(oldNode);
-            var newPath = PATH.join2(NODEFS.realPath(newDir), newName);
-            try {
-                FS.unlink(newPath);
-            } catch (e) { }
-            NODEFS.tryFSOperation(() => fs.renameSync(oldPath, newPath));
-            oldNode.name = newName;
+        rename(old_node, new_dir, new_name) {
+            wxFs.renameSync(NODEFS.realPath(old_node), NODEFS.realPath(new_dir, new_name));
         },
         unlink(parent, name) {
-            var path = PATH.join2(NODEFS.realPath(parent), name);
-            NODEFS.tryFSOperation(() => fs.unlinkSync(path));
+            wxFs.unlinkSync(NODEFS.realPath(parent, name));
         },
         rmdir(parent, name) {
-            var path = PATH.join2(NODEFS.realPath(parent), name);
-            NODEFS.tryFSOperation(() => fs.rmdirSync(path));
+            wxFs.rmdirSync(NODEFS.realPath(parent, name));
         },
         readdir(node) {
-            var path = NODEFS.realPath(node);
-            return NODEFS.tryFSOperation(() => fs.readdirSync(path));
+            return wxFs.readdir(NODEFS.realPath(node, ''));
         },
-        symlink(parent, newName, oldPath) {
-            var newPath = PATH.join2(NODEFS.realPath(parent), newName);
-            NODEFS.tryFSOperation(() => fs.symlinkSync(oldPath, newPath));
+        symlink(parent, newname, oldpath) {
+            var node = NODEFS.createNode(parent, newname, 511 | 40960, 0);
+            node.link = oldpath;
+            return node;
         },
         readlink(node) {
-            var path = NODEFS.realPath(node);
-            return NODEFS.tryFSOperation(() => fs.readlinkSync(path));
+            if (!FS.isLink(node.mode)) {
+                throw new FS.ErrnoError(28);
+            }
+            return node.link;
         },
-        statfs(path) {
-            var stats = NODEFS.tryFSOperation(() => fs.statfsSync(path));
-            // Node.js doesn't provide frsize (fragment size). Set it to bsize (block size)
-            // as they're often the same in many file systems. May not be accurate for all.
-            stats.frsize = stats.bsize;
-            return stats;
-        },
-    };
-    static stream_ops = {
-        getattr(stream) {
-            return NODEFS.getattr(() => fs.fstatSync(stream.nfd), stream.node);
-        },
-        setattr(stream, attr) {
-            NODEFS.setattr(stream.nfd, stream.node, attr, fs.fchmodSync, fs.futimesSync, fs.ftruncateSync, fs.fstatSync);
-        },
+    },
+    stream_ops: {
         open(stream) {
-            var path = NODEFS.realPath(stream.node);
-            NODEFS.tryFSOperation(() => {
-                stream.shared.refcount = 1;
-                stream.nfd = fs.openSync(path, NODEFS.flagsForNode(stream.flags));
-            });
+            var path = NODEFS.realPath(stream.node, '');
+            stream.path = path;
+            stream.shared.refcount = 1;
+            // 微信小游戏中不需要显式打开文件描述符
+            // 使用文件路径作为标识
+            stream.fd = path;
         },
         close(stream) {
-            NODEFS.tryFSOperation(() => {
-                if (stream.nfd && --stream.shared.refcount === 0) {
-                    fs.closeSync(stream.nfd);
-                }
-            });
-        },
-        dup(stream) {
-            stream.shared.refcount++;
+            if (stream.fd && --stream.shared.refcount === 0) {
+                // 微信小游戏中不需要显式关闭文件
+                stream.fd = null;
+            }
         },
         read(stream, buffer, offset, length, position) {
-            return NODEFS.tryFSOperation(() =>
-                fs.readSync(stream.nfd, new Int8Array(buffer.buffer, offset, length), 0, length, position)
-            );
+            var result = wxFs.readSync({
+                fd: stream.fd,
+                arrayBuffer: buffer.buffer, offset: offset, length: length, position: position
+            });
+            return result.bytesRead;
         },
-        write(stream, buffer, offset, length, position) {
-            return NODEFS.tryFSOperation(() =>
-                fs.writeSync(stream.nfd, new Int8Array(buffer.buffer, offset, length), 0, length, position)
-            );
+        write(stream, buffer, offset, length, position, canOwn) {
+            // 使用微信小游戏同步API写入文件
+            wxFs.writeSync({
+                fd: stream.fd, data: buffer,
+                position: position,
+                length: length,
+                offset: offset
+            });
+
+            return length; // 返回写入的字节数
         },
         llseek(stream, offset, whence) {
             var position = offset;
@@ -231,10 +138,9 @@ class NODEFS {
                 position += stream.position;
             } else if (whence === 2) {
                 if (FS.isFile(stream.node.mode)) {
-                    NODEFS.tryFSOperation(() => {
-                        var stat = fs.fstatSync(stream.nfd);
-                        position += stat.size;
-                    });
+                    // 获取文件大小
+                    const stats = DMFS.getattr(stream.path, stream.node);
+                    position += stats.size;
                 }
             }
 
@@ -251,15 +157,14 @@ class NODEFS {
 
             var ptr = mmapAlloc(length);
 
-            NODEFS.stream_ops.read(stream, HEAP8, ptr, length, position);
+            this.stream_ops.read(stream, HEAP8, ptr, length, position);
             return { ptr, allocated: true };
         },
         msync(stream, buffer, offset, length, mmapFlags) {
-            NODEFS.stream_ops.write(stream, buffer, 0, length, offset, false);
-            // should we check if bytesWritten and length are the same?
+            this.stream_ops.write(stream, buffer, 0, length, offset, false);
             return 0;
-        }
-    };
-}
+        },
+    },
+};
 
 export default NODEFS;

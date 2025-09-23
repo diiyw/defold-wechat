@@ -1755,7 +1755,7 @@ var TTY = {
 var mmapAlloc = function mmapAlloc(size) {
     abort();
 };
-var MEMFS = {
+GameGlobal.MEMFS = {
     ops_table: null,
     mount(mount) {
         return MEMFS.createNode(null, "/", 16895, 0);

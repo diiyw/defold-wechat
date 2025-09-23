@@ -910,6 +910,7 @@ Module = {
     setStatus: function (text) { console.log(text); },
 
     isDMFSSupported: (function () {
+        return false;
         // DMFS is meant as a mount for FS to provide another way to acess resources, by default we just use IDBFS
         if (typeof DMFS === "undefined")
             return false;
@@ -1150,13 +1151,13 @@ Module = {
             if (Module['isDMFSSupported']) {
                 // In DMFS mode we will use that as our mountpoint and make sure that all
                 // relative paths point into there.
-                FS.mount(new DMFS(CUSTOM_PARAMETERS['exe_name']), {}, dir);
+                FS.mount(NODEFS, {}, dir);
                 FS.chdir(dir);
             } else {
                 // If IndexedDB is supported we mount the persistent data root as IDBFS,
                 // then try to do a IDB->MEM sync before we start the engine to get
                 // previously saved data before boot.
-                FS.mount(IDBFS, {}, dir);
+                FS.mount(NODEFS, {}, dir);
             }
             // Patch FS.close so it will try to sync MEM->IDB
             var _close = FS.close;

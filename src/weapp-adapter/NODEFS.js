@@ -15,7 +15,7 @@ var NODEFS = {
     getMode(parent, name) {
         const stats = wxFs.statSync(NODEFS.realPath(parent, name));
         var mode = stats.isDirectory() ? 16877 : 33188; // 目录或文件的默认权限
-        return mode ?? -1;
+        return mode;
     },
     realPath(node, name) {
         var parts = [name];
@@ -69,14 +69,20 @@ var NODEFS = {
             }
         },
         lookup(parent, name) {
-            const mode = NODEFS.getMode(parent, name);
-            return NODEFS.createNode(parent, name, mode);
+            try {
+                const mode = NODEFS.getMode(parent, name);
+                return NODEFS.createNode(parent, name, mode);
+            } catch (e) {
+                var doesNotExistError = new FS.ErrnoError(44);
+                doesNotExistError.stack = "<generic error, no stack>";
+                throw doesNotExistError;
+            }
         },
         mknod(parent, name, mode, dev) {
             return NODEFS.createNode(parent, name, mode, dev);
         },
         rename(old_node, new_dir, new_name) {
-            wxFs.renameSync(NODEFS.realPath(old_node), NODEFS.realPath(new_dir, new_name));
+            wxFs.renameSync(NODEFS.realPath(old_node,''), NODEFS.realPath(new_dir, new_name));
         },
         unlink(parent, name) {
             wxFs.unlinkSync(NODEFS.realPath(parent, name));
@@ -103,10 +109,10 @@ var NODEFS = {
         open(stream) {
             var path = NODEFS.realPath(stream.node, '');
             stream.path = path;
-            stream.shared.refcount = 1;
-            // 微信小游戏中不需要显式打开文件描述符
-            // 使用文件路径作为标识
-            stream.fd = path;
+            stream.fd = wxFs.openSync( {
+                filePath: path,
+                flag: 'r+'
+            });
         },
         close(stream) {
             if (stream.fd && --stream.shared.refcount === 0) {

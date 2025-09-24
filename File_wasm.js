@@ -1366,7 +1366,7 @@ var ___assert_fail = function ___assert_fail(condition, filename, line, func) {
         ]
     );
 };
-var PATH = {
+GameGlobal.PATH = {
     isAbs: function isAbs(path) {
         return path.charAt(0) === "/";
     },

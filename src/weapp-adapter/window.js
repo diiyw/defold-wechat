@@ -34,8 +34,6 @@ export { default as AudioContext } from './AudioContext'
 // 为了兼容性，也导出 webkitAudioContext
 export { default as webkitAudioContext } from './AudioContext'
 export { default as DMFS } from './DMFS'
-export { default as NODEFS } from './NODEFS'
-export { default as PROXYFS } from './PROXYFS'
 const { platform } = wx.getSystemInfoSync()
 
 // 暴露全局的 canvas

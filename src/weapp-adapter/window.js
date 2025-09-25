@@ -23,6 +23,7 @@ export { default as HTMLVideoElement } from './HTMLVideoElement'
 export { default as WebGLRenderingContext } from './WebGLRenderingContext'
 export { TouchEvent, PointerEvent, MouseEvent } from './EventIniter/index.js'
 export { default as localStorage } from './localStorage'
+export { default as indexedDB } from './indexedDB'
 export { default as location } from './location'
 export { btoa, atob } from './Base64.js'
 export { default as Symbol } from './Symbol'
@@ -33,7 +34,6 @@ export { default as WebGL2RenderingContext } from './WebGL2RenderingContext'
 export { default as AudioContext } from './AudioContext'
 // 为了兼容性，也导出 webkitAudioContext
 export { default as webkitAudioContext } from './AudioContext'
-export { default as DMFS } from './DMFS'
 const { platform } = wx.getSystemInfoSync()
 
 // 暴露全局的 canvas

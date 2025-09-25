@@ -2592,6 +2592,7 @@ var IDBFS = {
             });
     },
 };
+GameGlobal.IDBFS = IDBFS;
 GameGlobal.FS = {
     root: null,
     mounts: [],

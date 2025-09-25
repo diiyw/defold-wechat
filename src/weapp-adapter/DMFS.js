@@ -208,8 +208,7 @@ var DMFS = {
         var node = DMFS.createNode(parent, name, mode);
         return node;
       } catch (e) {
-        if (!e.code) throw e;
-        throw new FS.ErrnoError(ERRNO_CODES[e.code]);
+        throw new FS.ErrnoError(ERRNO_CODES.ENOENT);
       }
     },
     mknod(parent, name, mode, dev) {

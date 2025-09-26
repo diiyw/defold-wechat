@@ -2,7 +2,7 @@
   "appid": "wx21b1c69c4d7f0cb8",
   "projectname": "Colorslide",
   "compileType": "game",
-  "libVersion": "3.9.2",
+  "libVersion": "3.10.0",
   "packOptions": {
     "ignore": [],
     "include": []

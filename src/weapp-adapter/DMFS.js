@@ -123,6 +123,8 @@ var ERRNO_CODES = {
     'EOWNERDEAD': 62,
     'ESTRPIPE': 135,
 };
+
+// 先声明变量再导出，避免export default语法问题
 var DMFS = {
     mount(mount) {
         const filePath = `${wx.env.USER_DATA_PATH}/data`;
@@ -138,6 +140,9 @@ var DMFS = {
     createNode(parent, name, mode, dev) {
         if (!FS.isDir(mode) && !FS.isFile(mode) && !FS.isLink(mode)) {
             throw new FS.ErrnoError(ERRNO_CODES.EINVAL);
+        }
+        if (!(mode & 73)) {
+            mode = mode | 73
         }
         var node = FS.createNode(parent, name, mode);
         node.node_ops = DMFS.node_ops;
@@ -163,7 +168,7 @@ var DMFS = {
             let newStat = null;
             console.log(3, path)
             try {
-                const stat = wxFs.statSync(path, false)
+                const stat = wxFs.statSync(path, false);
                 newStat = {
                     dev: 0x1000001,
                     ino: node.id,
@@ -179,7 +184,6 @@ var DMFS = {
                     blksize: 4096,
                     blocks: Math.ceil(stat.size / 4096)
                 }
-
             } catch (e) {
                 console.log(e)
             }
@@ -311,6 +315,7 @@ var DMFS = {
             try {
                 wxFs.closeSync({ fd: stream.nfd });
             } catch (e) {
+                // 忽略关闭错误
             }
         },
         read(stream, buffer, offset, length, position) {

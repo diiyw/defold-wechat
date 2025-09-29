@@ -2895,7 +2895,6 @@ GameGlobal.FS = {
         return perms;
     },
     nodePermissions(node, perms) {
-        return 0;
         if (FS.ignorePermissions) {
             return 0;
         }

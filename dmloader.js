@@ -1205,7 +1205,7 @@ Module = {
     }],
 
     _preloadAndCallMain: function () {
-        console.log("_preloadAndCallMain", Module._syncInitial || Module.persistentStorage != true, Module._isEngineLoaded)
+        console.log("_preloadAndCallMain", Module._syncInitial, Module.persistentStorage, Module._isEngineLoaded)
         if (Module._syncInitial || Module.persistentStorage != true) {
             // If the archive isn't loaded,
             // we will have to wait with calling main.

@@ -190,7 +190,6 @@ var DMFS = {
             var path = DMFS.realPath(node);
             try {
                 if (attr.mode !== undefined) {
-                    FS.chmod(path, attr.mode);
                     // update the common node structure mode as well
                     node.mode = attr.mode;
                 }
@@ -316,13 +315,23 @@ var DMFS = {
         },
         read(stream, buffer, offset, length, position) {
             try {
-                return wxFs.readSync({
+                // 创建一个新的 ArrayBuffer 来接收读取的数据
+                const tempBuffer = new ArrayBuffer(length);
+                const result = wxFs.readSync({
                     fd: stream.nfd,
-                    arrayBuffer: buffer,
-                    offset: offset,
+                    arrayBuffer: tempBuffer,
+                    offset: 0,
                     length: length,
                     position: position
                 });
+
+                // 将读取的数据复制到原始 buffer 的指定位置
+                const underlyingBuffer = buffer.buffer;
+                const sourceView = new Uint8Array(tempBuffer);
+                const targetView = new Uint8Array(underlyingBuffer, offset, length);
+                targetView.set(sourceView);
+
+                return result.bytesRead;
             } catch (e) {
                 if (!e.code) throw e;
                 throw new FS.ErrnoError(ERRNO_CODES[e.code]);
@@ -330,14 +339,21 @@ var DMFS = {
         },
         write(stream, buffer, offset, length, position) {
             try {
-                return wxFs.writeSync({
+                // 获取 buffer 底层的 ArrayBuffer
+                const underlyingBuffer = buffer.buffer;
+                // 创建一个只包含需要写入数据的子 ArrayBuffer
+                const subBuffer = underlyingBuffer.slice(offset, offset + length);
+
+                const result = wxFs.writeSync({
                     fd: stream.nfd,
-                    data: buffer.buffer,
-                    offset: offset,
+                    data: subBuffer,
+                    offset: 0,
                     length: length,
                     position: position,
                     encoding: 'binary'
                 });
+
+                return result.bytesWritten;
             } catch (e) {
                 if (!e.code) throw e;
                 throw new FS.ErrnoError(ERRNO_CODES[e.code]);

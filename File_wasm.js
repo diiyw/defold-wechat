@@ -2739,6 +2739,7 @@ GameGlobal.FS = {
         if (!PATH.isAbs(path)) {
             path = FS.cwd() + "/" + path;
         }
+        console.log(6.144)
         linkloop: for (var nlinks = 0; nlinks < 40; nlinks++) {
             var parts = path.split("/").filter(function (p) {
                 return !!p;
@@ -2760,6 +2761,7 @@ GameGlobal.FS = {
                 }
                 current_path = PATH.join2(current_path, parts[i]);
                 try {
+                    console.log(6.145, current, parts[i])
                     current = FS.lookupNode(current, parts[i]);
                 } catch (e) {
                     if (
@@ -2893,14 +2895,17 @@ GameGlobal.FS = {
         return perms;
     },
     nodePermissions(node, perms) {
+        return 0;
         if (FS.ignorePermissions) {
             return 0;
         }
+        console.log("nodePermissions", node, node.mode, node.mode & 292, node.mode & 146, node.mode & 73)
         if (perms.includes("r") && !(node.mode & 292)) {
             return 2;
         } else if (perms.includes("w") && !(node.mode & 146)) {
             return 2;
         } else if (perms.includes("x") && !(node.mode & 73)) {
+            console.log("nodePermissions   xxxxxxxxxxxxxx", node.mode)
             return 2;
         }
         return 0;
@@ -3428,7 +3433,9 @@ GameGlobal.FS = {
     chmod(path, mode, dontFollow) {
         var node;
         if (typeof path == "string") {
+            console.log(6.13, path, mode, dontFollow)
             var lookup = FS.lookupPath(path, { follow: !dontFollow });
+            console.log(6.14, path, mode, dontFollow)
             node = lookup.node;
         } else {
             node = path;
@@ -3541,6 +3548,7 @@ GameGlobal.FS = {
                 throw new FS.ErrnoError(31);
             } else {
                 node = FS.mknod(path, mode | 511, 0);
+                console.log(6.11, lookup, path, node, flags & 64, isDirPath)
                 created = true;
             }
         }
@@ -3577,6 +3585,7 @@ GameGlobal.FS = {
         if (stream.stream_ops.open) {
             stream.stream_ops.open(stream);
         }
+        console.log(6.12, lookup, path, node, flags & 64, isDirPath)
         if (created) {
             FS.chmod(node, mode & 511);
         }

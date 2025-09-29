@@ -460,6 +460,7 @@ var EngineLoader = {
             }
         });
         GameArchiveLoader.addFileLoadedListener(Module.onArchiveFileLoaded);
+        console.log(Module.onArchiveLoaded)
         GameArchiveLoader.addArchiveLoadedListener(Module.onArchiveLoaded);
         GameArchiveLoader.setFileLocationFilter(CUSTOM_PARAMETERS["archive_location_filter"]);
         GameArchiveLoader.loadArchiveDescription('/archive_files.json');
@@ -607,9 +608,12 @@ var GameArchiveLoader = {
         var file = this._files[this._fileIndex];
 
         if (Module['isDMFSSupported']) {
+            console.log(1, file, this._files, Module._isMainCalled)
             const path = `${DMSYS.GetUserPersistentDataRoot()}/${file.name}`;
             try { // see if already and stored
+                console.log(2, path)
                 const stat = FS.stat(path);
+                console.log(5, path)
                 if (stat) {
                     let matches = (file.size == stat.size);
                     if (matches && file.sha1) {
@@ -628,6 +632,7 @@ var GameArchiveLoader = {
                         }
                     }
                     if (matches) {
+                        console.log("download", matches, file, this._fileIndex, this._files)
                         this.onFileLoaded(file);
                         return;
                     }
@@ -785,6 +790,7 @@ var GameArchiveLoader = {
         this.notifyFileLoaded(file);
         ++this._fileIndex;
         if (this._fileIndex == this._files.length) {
+            console.log("onArchiveLoaded")
             this.onArchiveLoaded();
         } else {
             this.downloadContent();
@@ -1065,6 +1071,7 @@ Module = {
     onArchiveLoaded: function () {
         GameArchiveLoader.cleanUp();
         Module._archiveLoaded = true;
+        console.log("cleanUp onArchiveLoaded")
         Module._preloadAndCallMain();
     },
 
@@ -1105,6 +1112,7 @@ Module = {
     },
 
     preloadAll: function () {
+        console.log('preloadAll', Module._preLoadDone, Module._filesToPreload)
         if (Module._preLoadDone) {
             return;
         }
@@ -1197,6 +1205,7 @@ Module = {
     }],
 
     _preloadAndCallMain: function () {
+        console.log("_preloadAndCallMain", Module._syncInitial || Module.persistentStorage != true, Module._isEngineLoaded)
         if (Module._syncInitial || Module.persistentStorage != true) {
             // If the archive isn't loaded,
             // we will have to wait with calling main.
@@ -1212,6 +1221,7 @@ Module = {
     },
 
     _callMain: function (_, _x) {
+        console.log("_callMain")
         if (!Module._isMainCalled) {
             Module._isMainCalled = true;
             ProgressView.removeProgress();

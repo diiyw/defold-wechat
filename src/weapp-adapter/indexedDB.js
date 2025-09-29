@@ -2,12 +2,13 @@
 import EventTarget from './EventTarget'
 
 const wxFs = wx.getFileSystemManager();
+const dataDir = '/data'
 const DB_ROOT_PATH = `${wx.env.USER_DATA_PATH}/indexedDB`;
 
 // 确保根目录存在
-wxFs.access({
+const dbFileExist = wxFs.access({
     filePath: DB_ROOT_PATH,
-    fail: () => {
+    fail: (e) => {
         wxFs.mkdirSync(DB_ROOT_PATH, true);
     }
 })
@@ -244,7 +245,7 @@ class IDBObjectStore {
     _loadExistingIndexes() {
         const storePath = this._getStorePath();
         const indexesPath = `${storePath}/.index`;
-        wx.access({
+        wxFs.access({  // 修复: 使用 wxFs 而不是 wx
             filePath: indexesPath,
             success: () => {
                 const indexesData = wxFs.readFileSync(indexesPath, 'utf8');
@@ -260,7 +261,7 @@ class IDBObjectStore {
     }
 
     _getFilePath(key) {
-        key = key.substring(5)
+        key = key.substring(dataDir.length)
         return `${this._getStorePath()}/${key}`;
     }
 
@@ -274,40 +275,41 @@ class IDBObjectStore {
 
     get(key) {
         const request = new IDBRequest();
-
-        try {
-            const filePath = this._getFilePath(key);
-            const stat = wxFs.statSync(filePath)
-            let contents = undefined;
-            if (stat.isFile()) {
-                contents = wxFs.readFileSync(filePath, 'utf8');
+        Promise.resolve().then(() => {
+            try {
+                const filePath = this._getFilePath(key);
+                const stat = wxFs.statSync(filePath)
+                let contents = undefined;
+                if (stat.isFile()) {
+                    contents = wxFs.readFileSync(filePath, 'utf8');
+                }
+                const v = {
+                    mode: stat.mode,
+                    timestamp: new Date(stat.lastModifiedTime * 1000)
+                }
+                if (contents !== undefined) {
+                    v.contents = contents
+                }
+                request._success(v);
+            } catch (e) {
+                // 修复: 出错时应该调用 _error 而不是 _success
+                request._error(e);
             }
-            const v = {
-                mode: stat.mode,
-                timestamp: new Date(stat.lastModifiedTime * 1000)
-            }
-            if (contents !== undefined) {
-                v.contents = contents
-            }
-            request._success(v);
-        } catch (e) {
-            request._success(undefined);
-        }
-
+        });
         return request;
     }
 
     delete(key) {
         const request = new IDBRequest();
-
-        try {
-            const filePath = this._getFilePath(key);
-            wxFs.unlinkSync(filePath);
-            request._success();
-        } catch (e) {
-            request._error(e);
-        }
-
+        Promise.resolve().then(() => {
+            try {
+                const filePath = this._getFilePath(key);
+                wxFs.unlinkSync(filePath);
+                request._success();
+            } catch (e) {
+                request._error(e);
+            }
+        })
         return request;
     }
 
@@ -333,6 +335,7 @@ class IDBObjectStore {
 
     _performOperation(operation, value, key) {
         const request = new IDBRequest();
+        const that = this; // 保存 this 引用
         Promise.resolve().then(() => {
             try {
                 if (key === undefined) {
@@ -360,8 +363,9 @@ class IDBObjectStore {
                     },
                     complete: function () {
                         // 完成事务
-                        if (this.transaction) {
-                            this.transaction._complete();
+                        // 修复: 使用 that 而不是 this 来引用 IDBObjectStore 实例
+                        if (that.transaction) {
+                            that.transaction._complete();
                         }
                     }
                 })
@@ -389,6 +393,8 @@ class IDBObjectStore {
         // 保存索引配置到文件系统
         this._saveIndexes();
 
+        // 修复: 正确创建并返回 IDBIndex 实例
+        const index = new IDBIndex(name, this);
         return index;
     }
 }
@@ -406,8 +412,10 @@ class IDBIndex {
     }
 
     getKey(key) {
+        Promise.resolve().then(() => {
+            request._success(key);
+        })
         const request = new IDBRequest();
-        request._success(key);
         return request;
     }
 

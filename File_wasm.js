@@ -2768,6 +2768,7 @@ GameGlobal.FS = {
                         islast &&
                         opts.noent_okay
                     ) {
+                        console.log(6.2, current_path)
                         return { path: current_path };
                     }
                     throw e;
@@ -2950,6 +2951,7 @@ GameGlobal.FS = {
         if (!node) {
             return 44;
         }
+        console.log(8, node, FS.isDir(node.mode))
         if (FS.isLink(node.mode)) {
             return 32;
         } else if (FS.isDir(node.mode)) {
@@ -3523,6 +3525,7 @@ GameGlobal.FS = {
                 follow: !(flags & 131072),
                 noent_okay: true,
             });
+            console.log(6, lookup, path, node, flags & 64, isDirPath)
             node = lookup.node;
             path = lookup.path;
         }
@@ -3530,8 +3533,10 @@ GameGlobal.FS = {
         if (flags & 64) {
             if (node) {
                 if (flags & 128) {
+                    console.log("open1", path, flags, node)
                     throw new FS.ErrnoError(20);
                 }
+                console.log("open2", path, flags, node)
             } else if (isDirPath) {
                 throw new FS.ErrnoError(31);
             } else {
@@ -3548,6 +3553,7 @@ GameGlobal.FS = {
         if (flags & 65536 && !FS.isDir(node.mode)) {
             throw new FS.ErrnoError(54);
         }
+
         if (!created) {
             var errCode = FS.mayOpen(node, flags);
             if (errCode) {
@@ -3574,6 +3580,7 @@ GameGlobal.FS = {
         if (created) {
             FS.chmod(node, mode & 511);
         }
+        console.log(7, path, created)
         if (Module["logReadFiles"] && !(flags & 1)) {
             if (!(path in FS.readFiles)) {
                 FS.readFiles[path] = 1;
